@@ -61,6 +61,16 @@ def main():
         pts = " ".join(f"{i * 200},{y:.0f}" for i, y in enumerate(ys))
         standalone(name, 1800, h, f'<polygon points="0,{h} {pts} 1800,{h}" fill="{col}"/>')
 
+    sys.path.insert(0, str(Path(__file__).parent))
+    import props
+    for name in ("terminal", "rack", "board", "tower", "radio", "sandbags", "billboard"):
+        w, h, body = getattr(props, name)()
+        standalone(f"{name}.svg", w, h, body)
+    w, h, body = props.crate()
+    standalone("crate.svg", w, h, body)
+    w, h, body = props.crate("PRO")
+    standalone("crate-pro.svg", w, h, body)
+
     s = Svg(120, 120, "head")
     standalone("head.svg", 120, 120, art.head_icon(s, 60, 66, 112), defs_from=s)
 

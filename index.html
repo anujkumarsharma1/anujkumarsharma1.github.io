@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anuj Kumar Sharma · Player 01</title>
-<meta name="description" content="Anuj Kumar Sharma: aspiring software engineer, AIT Pune '28. Competitive programmer, GSSoC'25 mentor. Portfolio in the style of Mini Militia.">
+<meta name="description" content="Anuj Kumar Sharma: aspiring software engineer, AIT Pune '28. Competitive programmer, GSSoC'25 mentor. A walkable portfolio in the style of Mini Militia.">
 <meta property="og:title" content="Anuj Kumar Sharma · Player 01">
-<meta property="og:description" content="Aspiring software engineer, AIT Pune '28. Scroll to deploy.">
+<meta property="og:description" content="Aspiring software engineer, AIT Pune '28. Walk the outpost, press E to interact.">
 <meta property="og:image" content="https://anujkumarsharma1.github.io/assets/og.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -16,7 +16,7 @@
 <link rel="preload" href="assets/fonts/LuckiestGuy-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <script>
-  // choose the mode before first paint: game (desktop) or flat (phones, reduced motion, or chosen)
+  // game on desktop; plain page on phones, reduced motion, or when chosen
   (function () {
     var flat = matchMedia("(max-width: 820px), (prefers-reduced-motion: reduce), (pointer: coarse)").matches;
     try { var m = localStorage.getItem("mode"); if (m) flat = m === "flat"; } catch (e) {}
@@ -25,175 +25,214 @@
 </script>
 </head>
 <body>
-<a class="skip" href="#briefing">Skip to content</a>
+<a class="skip" href="#p-briefing">Skip to content</a>
 
-<header id="hud" aria-label="Level navigation">
+<header id="hud" aria-label="Heads-up display">
   <div class="hud-bars" aria-hidden="true">
     <span class="hud-icon heart"></span><span class="bar"><i class="hp"></i></span>
     <span class="hud-icon jet"></span><span class="bar"><i class="fuel" id="fuel"></i></span>
   </div>
-  <nav class="tabs">
-    <a href="#splash" data-level="0">START</a>
-    <a href="#briefing" data-level="1">BRIEFING</a>
-    <a href="#armory" data-level="2">ARMORY</a>
-    <a href="#missions" data-level="3">MISSIONS</a>
-    <a href="#battlefield" data-level="4">BATTLE</a>
-    <a href="#comms" data-level="5">COMMS</a>
+  <nav class="map" id="map" aria-label="Fast travel">
+    <span class="track"></span>
+    <button data-go="spawn" style="--p:4%" title="Spawn"><span>SPAWN</span></button>
+    <button data-go="briefing" style="--p:21%" title="ID terminal"><span>ABOUT</span></button>
+    <button data-go="armory" style="--p:33%" title="Weapon locker"><span>SKILLS</span></button>
+    <button data-go="missions" style="--p:45%" title="Mission board"><span>PROJECTS</span></button>
+    <button data-go="battlefield" style="--p:67%" title="Radar tower"><span>ACTIVITY</span></button>
+    <button data-go="comms" style="--p:82%" title="Radio mast"><span>CONTACT</span></button>
+    <i class="me" id="me"></i>
   </nav>
   <button id="mode" class="mode" type="button" aria-pressed="false">RESUME MODE</button>
 </header>
 
-<div id="world">
+<!-- ============ the walkable world ============ -->
+<div id="stage" aria-hidden="true">
   <div id="sky"></div>
-  <div class="par far" data-rate="0.08"><div class="tile"></div></div>
-  <div class="par near" data-rate="0.2"><div class="tile"></div></div>
+  <div class="moon"></div>
+  <div class="cloud" style="top:16vh;--d:70s"></div>
+  <div class="cloud" style="top:28vh;--d:95s;--o:-40s;transform:scale(.7)"></div>
+  <div class="cloud" style="top:10vh;--d:120s;--o:-80s"></div>
+  <div class="par far" data-rate="0.12"><div class="tile"></div></div>
+  <div class="par near" data-rate="0.28"><div class="tile"></div></div>
+  <div id="world">
+    <div class="billboard" style="left:150px;top:470px">
+      <img src="assets/art/billboard.svg" alt="">
+      <div class="bb-text"><p class="kicker">PLAYER 01 · READY</p><p class="chrome bb-name">ANUJ KUMAR SHARMA</p><p class="bb-sub fire-lite">ASPIRING SOFTWARE ENGINEER · AIT PUNE '28</p></div>
+    </div>
+    <div class="howto" style="left:200px;top:418px"><b>A D</b> MOVE <b>W</b> FLY <b>E</b> USE <b>CLICK</b> FIRE</div>
 
-  <main id="track">
-    <!-- 0 · SPLASH -->
-    <section class="level" id="splash" aria-label="Start">
-      <div class="splash">
-        <p class="kicker">PLAYER 01 · READY</p>
-        <h1 class="chrome">ANUJ KUMAR SHARMA</h1>
-        <p class="sub fire-lite">ASPIRING SOFTWARE ENGINEER · AIT PUNE '28</p>
-        <ul class="chips">
-          <li><img src="assets/icons/codeforces.svg" alt="">CP</li>
-          <li><img src="assets/icons/github.svg" alt="">GSSOC'25 MENTOR</li>
-          <li><img src="assets/icons/map-pin.svg" alt="">PUNE</li>
-        </ul>
-        <p class="deploy">SCROLL TO DEPLOY <span class="go">▶</span></p>
-      </div>
-    </section>
+    <div class="prop" data-station="briefing" style="left:960px;top:580px;width:150px"><img src="assets/art/terminal.svg" alt=""></div>
+    <div class="prop" data-station="armory" style="left:1460px;top:520px;width:150px"><img src="assets/art/rack.svg" alt=""></div>
+    <img class="deco" src="assets/art/sandbags.svg" alt="" style="left:1680px;top:652px;width:96px">
+    <div class="prop" data-station="missions" style="left:1980px;top:530px;width:210px"><img src="assets/art/board.svg" alt=""></div>
+    <img class="deco" src="assets/art/crate.svg" alt="" style="left:2250px;top:642px;width:70px">
+    <img class="deco" src="assets/art/crate.svg" alt="" style="left:2318px;top:642px;width:70px">
+    <img class="deco" src="assets/art/crate.svg" alt="" style="left:2284px;top:586px;width:70px">
 
-    <!-- 1 · BRIEFING -->
-    <section class="level" id="briefing" aria-labelledby="h-brief">
-      <div class="panel frame">
-        <h2 class="fire" id="h-brief">BRIEFING</h2>
-        <ul class="lines">
-          <li>Engineering student at AIT Pune, class of 2028.</li>
-          <li>Competitive programmer. GSSoC'25 mentor.</li>
-          <li>Building toward distributed systems and ML infrastructure.</li>
-        </ul>
-        <div class="rank"><span class="pixel" id="rank-name">CORPORAL</span><span class="xp"><i id="xp"></i></span></div>
-        <dl class="stats">
-          <div><dt>COMMITS</dt><dd data-stat="commits">158</dd></div>
-          <div><dt>CONTRIBS / YR</dt><dd data-stat="contrib">180</dd></div>
-          <div><dt>ACTIVE DAYS / YR</dt><dd data-stat="active">49</dd></div>
-          <div><dt>PUBLIC REPOS</dt><dd data-stat="repos">24</dd></div>
-        </dl>
-        <p class="live"><span class="dot"></span>LIVE FROM GITHUB · <span id="synced">SYNCED DAILY</span></p>
-      </div>
-    </section>
+    <div class="plat" style="left:2560px;top:560px;width:210px"></div>
+    <div class="plat" style="left:2860px;top:430px;width:190px"></div>
+    <div class="plat" style="left:3140px;top:300px;width:280px"></div>
+    <div class="prop" data-station="battlefield" style="left:3210px;top:110px;width:130px"><img src="assets/art/tower.svg" alt=""></div>
+    <div class="hint-up" style="left:2600px;top:500px">HOLD W ▲</div>
 
-    <!-- 2 · ARMORY -->
-    <section class="level" id="armory" aria-labelledby="h-armory">
-      <div class="panel">
-        <h2 class="fire" id="h-armory">ARMORY</h2>
-        <ul class="crates">
-          <li style="--c:#3776AB"><i style="--i:url(assets/icons/python.svg)"></i>Python</li>
-          <li style="--c:#00599C"><i style="--i:url(assets/icons/cplusplus.svg)"></i>C++</li>
-          <li style="--c:#00ADD8"><i style="--i:url(assets/icons/go.svg)"></i>Go</li>
-          <li style="--c:#3178C6"><i style="--i:url(assets/icons/typescript.svg)"></i>TypeScript</li>
-          <li style="--c:#F7DF1E"><i style="--i:url(assets/icons/javascript.svg)"></i>JavaScript</li>
-          <li style="--c:#EE4C2C"><i style="--i:url(assets/icons/pytorch.svg)"></i>PyTorch</li>
-          <li style="--c:#FF4B4B"><i style="--i:url(assets/icons/streamlit.svg)"></i>Streamlit</li>
-          <li style="--c:#0175C2"><i style="--i:url(assets/icons/dart.svg)"></i>Dart</li>
-          <li style="--c:#F03C2E"><i style="--i:url(assets/icons/git.svg)"></i>Git</li>
-          <li style="--c:#2088FF"><i style="--i:url(assets/icons/githubactions.svg)"></i>Actions</li>
-        </ul>
-      </div>
-    </section>
+    <div class="prop" data-station="comms" style="left:3800px;top:450px;width:110px"><img src="assets/art/radio.svg" alt=""></div>
+    <img class="deco" src="assets/art/sandbags.svg" alt="" style="left:3930px;top:652px;width:96px">
 
-    <!-- 3 · MISSIONS -->
-    <section class="level" id="missions" aria-labelledby="h-missions">
-      <div class="panel wide">
-        <h2 class="fire" id="h-missions">MISSIONS</h2>
-        <div class="cards">
-          <a class="card done" href="https://github.com/anujkumarsharma1/kavach">
-            <span class="status"><i class="ic check"></i>COMPLETE</span>
-            <h3>KAVACH</h3>
-            <p>Finds payloads hidden inside model weights.</p>
-            <span class="stack"><i style="--i:url(assets/icons/python.svg)"></i><i style="--i:url(assets/icons/pytorch.svg)"></i><i style="--i:url(assets/icons/streamlit.svg)"></i></span>
-            <span class="open">REPO ↗</span>
-          </a>
-          <a class="card briefed" href="https://github.com/anujkumarsharma1/zero-to-hero">
-            <span class="status">BRIEFED</span>
-            <h3>ZERO-TO-HERO</h3>
-            <p>Autograd engine and char-level LM, from scratch.</p>
-            <span class="stack"><i style="--i:url(assets/icons/python.svg)"></i><i style="--i:url(assets/icons/pytorch.svg)"></i></span>
-            <span class="open">REPO ↗</span>
-          </a>
-          <a class="card briefed" href="https://github.com/anujkumarsharma1/league-server">
-            <span class="status">BRIEFED</span>
-            <h3>LEAGUE-SERVER</h3>
-            <p>Test-driven Go HTTP service with persistence.</p>
-            <span class="stack"><i style="--i:url(assets/icons/go.svg)"></i></span>
-            <span class="open">REPO ↗</span>
-          </a>
-          <a class="card locked" href="https://github.com/anujkumarsharma1/raft-kv">
-            <span class="status"><i class="ic lock"></i>DEC 2026</span>
-            <h3>RAFT-KV</h3>
-            <p>Fault-tolerant key/value store on Raft.</p>
-            <span class="stack"><i style="--i:url(assets/icons/go.svg)"></i></span>
-            <span class="open">REPO ↗</span>
-          </a>
-          <a class="card locked" href="https://github.com/anujkumarsharma1/agent-eval-harness">
-            <span class="status"><i class="ic lock"></i>PLANNED</span>
-            <h3>AGENT-EVAL-HARNESS</h3>
-            <p>An agent plus the evals that keep it honest.</p>
-            <span class="stack"><i style="--i:url(assets/icons/python.svg)"></i></span>
-            <span class="open">REPO ↗</span>
-          </a>
-          <a class="card locked" href="https://github.com/anujkumarsharma1/llm-gateway">
-            <span class="status"><i class="ic lock"></i>PLANNED</span>
-            <h3>LLM-GATEWAY</h3>
-            <p>Go gateway routing between vLLM and SGLang.</p>
-            <span class="stack"><i style="--i:url(assets/icons/go.svg)"></i></span>
-            <span class="open">REPO ↗</span>
-          </a>
-        </div>
-      </div>
-      <button class="drone" type="button" style="--x:66%;--y:6%" aria-label="Robot drone"></button>
-      <button class="drone" type="button" style="--x:34%;--y:16%" aria-label="Robot drone"></button>
-    </section>
+    <div class="plat" style="left:4250px;top:250px;width:150px"></div>
+    <div class="prop secret" data-station="pro" style="left:4290px;top:192px;width:70px"><img src="assets/art/crate-pro.svg" alt=""></div>
 
-    <!-- 4 · BATTLEFIELD -->
-    <section class="level" id="battlefield" aria-labelledby="h-battle">
-      <div class="panel wide">
-        <h2 class="fire" id="h-battle">BATTLEFIELD</h2>
-        <img class="field" loading="lazy" width="840" height="306"
-             src="https://raw.githubusercontent.com/anujkumarsharma1/anujkumarsharma1/main/assets/generated/battlefield.svg"
-             alt="Contribution graph from the last 12 months, drawn as a Mini Militia match" onerror="this.hidden=true">
-        <p class="live"><span class="dot"></span>EVERY CRATER IS A DAY I SHIPPED</p>
-      </div>
-    </section>
+    <img class="deco fol" src="assets/art/jungle-left.svg" alt="" style="left:2440px;top:420px;height:300px">
+    <img class="deco fol" src="assets/art/jungle-right.svg" alt="" style="left:3560px;top:380px;height:330px">
+    <img class="deco fol" src="assets/art/jungle-right.svg" alt="" style="left:4460px;top:400px;height:320px">
+    <img class="deco fol" src="assets/art/jungle-left.svg" alt="" style="left:-20px;top:300px;height:420px">
+    <div class="ground"></div>
+    <button class="drone" type="button" tabindex="-1" data-patrol="700,1300,120" style="left:0;top:0"></button>
+    <button class="drone" type="button" tabindex="-1" data-patrol="1900,2500,90" style="left:0;top:0"></button>
+    <button class="drone" type="button" tabindex="-1" data-patrol="3500,4200,140" style="left:0;top:0"></button>
 
-    <!-- 5 · COMMS -->
-    <section class="level" id="comms" aria-labelledby="h-comms">
-      <div class="panel">
-        <h2 class="fire" id="h-comms">JOIN MY SQUAD</h2>
-        <ul class="radio">
-          <li><a href="https://www.linkedin.com/in/anuj-kumar-sharma-0ba045324/" style="--c:#0A66C2"><i class="li"></i>LinkedIn</a></li>
-          <li><a href="mailto:anujkumarsharma049@gmail.com" style="--c:#EA4335"><i style="--i:url(assets/icons/gmail.svg)"></i>Gmail</a></li>
-          <li><a href="https://github.com/anujkumarsharma1" style="--c:#f1eefa"><i style="--i:url(assets/icons/github.svg)"></i>GitHub</a></li>
-          <li><a href="https://codeforces.com/profile/anujquant" style="--c:#1F8ACB"><i style="--i:url(assets/icons/codeforces.svg)"></i>Codeforces</a></li>
-          <li><a href="https://topmate.io/cybersmith" style="--c:#ffc21a"><i style="--i:url(assets/icons/calendar-clock.svg)"></i>Topmate</a></li>
-          <li><a href="https://medium.com/@cybersmith" style="--c:#f1eefa"><i style="--i:url(assets/icons/medium.svg)"></i>Medium</a></li>
-        </ul>
-        <p class="gg">GG · RESPAWN IN <span id="respawn">3</span></p>
-      </div>
-      <p class="credit">Fan tribute to Mini Militia – Doodle Army 2. Art drawn in code. Icons: Simple Icons, Lucide.</p>
-    </section>
-  </main>
-
-  <div class="bushes" aria-hidden="true"></div>
-  <img class="jungle left" src="assets/art/jungle-left.svg" alt="" aria-hidden="true">
-  <img class="jungle right" src="assets/art/jungle-right.svg" alt="" aria-hidden="true">
+    <div id="player"><!--pilot:start--><svg class="pilot-svg" viewBox="-70 -90 200 175" aria-hidden="true"><defs><pattern id="camo" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#6b7b43"/><path d="M2,3 q5,-3 8,1 q2,4 -3,5 q-5,1 -5,-6z" fill="#3b4a25"/><path d="M13,1 q6,0 7,4 q-2,3 -7,1z" fill="#7b5a36"/><path d="M14,11 q6,-2 8,3 q1,5 -5,5 q-5,-1 -3,-8z" fill="#3b4a25"/><path d="M3,14 q4,-1 5,3 q-1,3 -5,2z" fill="#262a1c"/><path d="M8,19 q4,-2 6,1 q-1,4 -6,3z" fill="#7b5a36"/><path d="M18,6 q3,1 2,3 q-2,1 -3,-1z" fill="#262a1c"/></pattern></defs><g id="pilot-body"><g transform="translate(-11 41)"><g transform="scale(0.8)"><g class="flame"><polygon points="0,-1 16.6,4.7 6.4,3.6 13.2,12.1 4.4,6.3 7.3,17.2 1.6,7.8 0.0,19.0 -1.6,7.8 -7.3,17.2 -4.4,6.3 -13.2,12.1 -6.4,3.6 -16.6,4.7" fill="#ff3d12"/><polygon points="0,-1 12.2,4.5 4.8,3.7 9.7,9.9 3.3,5.7 5.4,13.7 1.2,6.9 0.0,15.0 -1.2,6.9 -5.4,13.7 -3.3,5.7 -9.7,9.9 -4.8,3.7 -12.2,4.5" fill="#ff9a1a"/><polygon points="0,-1 7.0,3.0 3.1,3.0 5.1,6.6 1.8,4.5 1.9,8.7 0.0,5.0 -1.9,8.7 -1.8,4.5 -5.1,6.6 -3.1,3.0 -7.0,3.0" fill="#fff1a8"/><circle cy="3" r="2.6" fill="#ffffff"/></g></g></g><g transform="translate(6 43)"><g transform="scale(0.85)"><g class="flame"><polygon points="0,-1 16.6,4.7 6.4,3.6 13.2,12.1 4.4,6.3 7.3,17.2 1.6,7.8 0.0,19.0 -1.6,7.8 -7.3,17.2 -4.4,6.3 -13.2,12.1 -6.4,3.6 -16.6,4.7" fill="#ff3d12"/><polygon points="0,-1 12.2,4.5 4.8,3.7 9.7,9.9 3.3,5.7 5.4,13.7 1.2,6.9 0.0,15.0 -1.2,6.9 -5.4,13.7 -3.3,5.7 -9.7,9.9 -4.8,3.7 -12.2,4.5" fill="#ff9a1a"/><polygon points="0,-1 7.0,3.0 3.1,3.0 5.1,6.6 1.8,4.5 1.9,8.7 0.0,5.0 -1.9,8.7 -1.8,4.5 -5.1,6.6 -3.1,3.0 -7.0,3.0" fill="#fff1a8"/><circle cy="3" r="2.6" fill="#ffffff"/></g></g></g><g transform="rotate(10 -8 10)"><rect x="-14" y="8" width="11" height="27" rx="5" fill="url(#camo)" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-17,32 h13 q4,0 4,4 v4 h-18 q-2,0 -2,-3 z" fill="#1f1f22" stroke="#0b0a10" stroke-width="2.2" stroke-linejoin="round"/></g><g transform="rotate(-5 3 10)"><rect x="-2" y="8" width="11.5" height="28" rx="5" fill="url(#camo)" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-4,33 h14 q4.5,0 4.5,4.5 v3.5 h-19 q-2,0 -2,-3 z" fill="#1f1f22" stroke="#0b0a10" stroke-width="2.2" stroke-linejoin="round"/></g><path d="M-14,-13 q0,-9 9,-9 h11 q9,0 10,9 l1,21 q0,5 -5,5 h-21 q-5,0 -5,-5 z" fill="#5c6c3b" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-12,-2 q10,4 25,0 v9 q-12,4 -25,0 z" fill="#45522c"/><rect x="-14" y="8" width="30" height="5" fill="#2b2418" stroke="#0b0a10" stroke-width="1.6" stroke-linejoin="round"/><rect x="-1" y="8.4" width="5" height="4.2" rx="1" fill="#c9a24a"/><path d="M-10,-19 L12,7" stroke="#0b0a10" stroke-width="7.5" stroke-linecap="round"/><path d="M-10,-19 L12,7" stroke="#3a2a1c" stroke-width="5" stroke-linecap="round"/><rect x="-8.7" y="-19.8" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 -7.1 -15.6)"/><rect x="-4.7" y="-15.0" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 -3.1 -10.8)"/><rect x="-0.6" y="-10.2" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 1.0 -6.0)"/><rect x="3.5" y="-5.4" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 5.1 -1.2)"/><rect x="7.5" y="-0.6" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 9.1 3.6)"/><circle cx="5" cy="-38" r="19" fill="#e2b38a" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="-8.7" cy="-36" rx="3.6" ry="4.6" fill="#c68d62" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><path d="M-11.5,-37.0 Q-10.5,-19.9 7.1,-18.6 Q23.6,-19.9 24.6,-37.0 Q15.7,-32.3 7.1,-31.2 Q-1.4,-32.3 -11.5,-37.0 Z" fill="#4a2f1f" stroke="#0b0a10" stroke-width="2.2" stroke-linejoin="round"/><rect x="1.5" y="-30.0" width="11.8" height="5.7" rx="1.6" fill="#fff" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><path d="M2.5,-27.2 h9.8 M5.4,-29.0 v3.7 M9.3,-29.0 v3.7" stroke="#0b0a10" stroke-width="1.3"/><ellipse cx="4.2" cy="-40.3" rx="2.8" ry="2.4" fill="#fff" stroke="#0b0a10" stroke-width="1.5" stroke-linejoin="round"/><circle cx="5.0" cy="-40.0" r="1.3" fill="#0b0a10"/><path d="M7.9,-43.5 L0.2,-47.7 L0.2,-45.2 L7.9,-41.5 Z" fill="#0b0a10"/><ellipse cx="17.2" cy="-40.3" rx="3.4" ry="2.9" fill="#fff" stroke="#0b0a10" stroke-width="1.5" stroke-linejoin="round"/><circle cx="18.0" cy="-40.0" r="1.6" fill="#0b0a10"/><path d="M12.6,-43.5 L22.0,-47.7 L22.0,-45.2 L12.6,-41.5 Z" fill="#0b0a10"/><path d="M-14.9,-47.1 C-14.9,-62.3 25.5,-62.3 25.5,-47.1 L27.5,-44.1 Q5.0,-41.6 -16.9,-44.1 Z" fill="#5a6a3a" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-14.4,-47.1 Q5.0,-44.1 25.0,-47.1 L27.0,-44.3 Q5.0,-41.8 -16.4,-44.3 Z" fill="#44512b"/><path d="M-5.5,-54.3 Q5.0,-60.0 14.5,-55.1" stroke="#75884c" stroke-width="3" fill="none" stroke-linecap="round"/><g transform="translate(6.0 -12.0)"><g class="arm"><circle id="shoulder" r=".1" fill="none"/><circle id="muzzle" cx="69.0" cy="5" r=".1" fill="none"/><g transform="translate(15 5)"><path d="M-9,-4 h13 v9 h-10 l-3,-2 z" fill="#2a2f35" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><rect x="3" y="-5" width="31" height="9.5" rx="2" fill="#1e2226" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><rect x="33" y="-2" width="19" height="4" rx="1" fill="#1e2226" stroke="#0b0a10" stroke-width="1.6" stroke-linejoin="round"/><rect x="50" y="-2.9" width="5" height="5.8" rx="1" fill="#4a525a" stroke="#0b0a10" stroke-width="1.2" stroke-linejoin="round"/><path d="M18,4 l6.5,0 l3.8,11 l-6.3,1.2 z" fill="#2a2f35" stroke="#0b0a10" stroke-width="1.6" stroke-linejoin="round"/><rect x="11" y="-9" width="12" height="4" rx="1" fill="#4a525a" stroke="#0b0a10" stroke-width="1.4" stroke-linejoin="round"/><path d="M6,-1.8 h26" stroke="#4a525a" stroke-width="1.4"/></g><path d="M0,0 L12,4.5" stroke="#0b0a10" stroke-width="11.5" stroke-linecap="round"/><path d="M0,0 L12,4.5" stroke="#5c6c3b" stroke-width="7.5" stroke-linecap="round"/><circle cx="15" cy="5.5" r="4.6" fill="#3b3b40" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><g transform="translate(72.0 5)"><g class="mf"><path d="M0,0 L10,-6 L8,-1.5 L18,0 L8,1.5 L10,6 Z" fill="#ffe066"/><circle r="3.2" fill="#fff6c8"/></g></g></g></g></g></svg><!--pilot:end--></div>
+    <div id="prompt"><kbd>E</kbd><span id="prompt-label">OPEN</span></div>
+  </div>
+  <div class="bushes"></div>
+  <svg id="fx"></svg>
 </div>
 
-<div id="pilot" aria-hidden="true"><!--pilot:start--><svg class="pilot-svg" viewBox="-70 -90 200 175" aria-hidden="true"><defs><pattern id="camo" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#6b7b43"/><path d="M2,3 q5,-3 8,1 q2,4 -3,5 q-5,1 -5,-6z" fill="#3b4a25"/><path d="M13,1 q6,0 7,4 q-2,3 -7,1z" fill="#7b5a36"/><path d="M14,11 q6,-2 8,3 q1,5 -5,5 q-5,-1 -3,-8z" fill="#3b4a25"/><path d="M3,14 q4,-1 5,3 q-1,3 -5,2z" fill="#262a1c"/><path d="M8,19 q4,-2 6,1 q-1,4 -6,3z" fill="#7b5a36"/><path d="M18,6 q3,1 2,3 q-2,1 -3,-1z" fill="#262a1c"/></pattern></defs><g id="pilot-body"><g transform="translate(-11 41)"><g transform="scale(0.8)"><g class="flame"><polygon points="0,-1 16.6,4.7 6.4,3.6 13.2,12.1 4.4,6.3 7.3,17.2 1.6,7.8 0.0,19.0 -1.6,7.8 -7.3,17.2 -4.4,6.3 -13.2,12.1 -6.4,3.6 -16.6,4.7" fill="#ff3d12"/><polygon points="0,-1 12.2,4.5 4.8,3.7 9.7,9.9 3.3,5.7 5.4,13.7 1.2,6.9 0.0,15.0 -1.2,6.9 -5.4,13.7 -3.3,5.7 -9.7,9.9 -4.8,3.7 -12.2,4.5" fill="#ff9a1a"/><polygon points="0,-1 7.0,3.0 3.1,3.0 5.1,6.6 1.8,4.5 1.9,8.7 0.0,5.0 -1.9,8.7 -1.8,4.5 -5.1,6.6 -3.1,3.0 -7.0,3.0" fill="#fff1a8"/><circle cy="3" r="2.6" fill="#ffffff"/></g></g></g><g transform="translate(6 43)"><g transform="scale(0.85)"><g class="flame"><polygon points="0,-1 16.6,4.7 6.4,3.6 13.2,12.1 4.4,6.3 7.3,17.2 1.6,7.8 0.0,19.0 -1.6,7.8 -7.3,17.2 -4.4,6.3 -13.2,12.1 -6.4,3.6 -16.6,4.7" fill="#ff3d12"/><polygon points="0,-1 12.2,4.5 4.8,3.7 9.7,9.9 3.3,5.7 5.4,13.7 1.2,6.9 0.0,15.0 -1.2,6.9 -5.4,13.7 -3.3,5.7 -9.7,9.9 -4.8,3.7 -12.2,4.5" fill="#ff9a1a"/><polygon points="0,-1 7.0,3.0 3.1,3.0 5.1,6.6 1.8,4.5 1.9,8.7 0.0,5.0 -1.9,8.7 -1.8,4.5 -5.1,6.6 -3.1,3.0 -7.0,3.0" fill="#fff1a8"/><circle cy="3" r="2.6" fill="#ffffff"/></g></g></g><g transform="rotate(10 -8 10)"><rect x="-14" y="8" width="11" height="27" rx="5" fill="url(#camo)" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-17,32 h13 q4,0 4,4 v4 h-18 q-2,0 -2,-3 z" fill="#1f1f22" stroke="#0b0a10" stroke-width="2.2" stroke-linejoin="round"/></g><g transform="rotate(-5 3 10)"><rect x="-2" y="8" width="11.5" height="28" rx="5" fill="url(#camo)" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-4,33 h14 q4.5,0 4.5,4.5 v3.5 h-19 q-2,0 -2,-3 z" fill="#1f1f22" stroke="#0b0a10" stroke-width="2.2" stroke-linejoin="round"/></g><path d="M-14,-13 q0,-9 9,-9 h11 q9,0 10,9 l1,21 q0,5 -5,5 h-21 q-5,0 -5,-5 z" fill="#5c6c3b" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-12,-2 q10,4 25,0 v9 q-12,4 -25,0 z" fill="#45522c"/><rect x="-14" y="8" width="30" height="5" fill="#2b2418" stroke="#0b0a10" stroke-width="1.6" stroke-linejoin="round"/><rect x="-1" y="8.4" width="5" height="4.2" rx="1" fill="#c9a24a"/><path d="M-10,-19 L12,7" stroke="#0b0a10" stroke-width="7.5" stroke-linecap="round"/><path d="M-10,-19 L12,7" stroke="#3a2a1c" stroke-width="5" stroke-linecap="round"/><rect x="-8.7" y="-19.8" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 -7.1 -15.6)"/><rect x="-4.7" y="-15.0" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 -3.1 -10.8)"/><rect x="-0.6" y="-10.2" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 1.0 -6.0)"/><rect x="3.5" y="-5.4" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 5.1 -1.2)"/><rect x="7.5" y="-0.6" width="3.2" height="6" rx="1.2" fill="#e0b040" stroke="#0b0a10" stroke-width="1" transform="rotate(-40 9.1 3.6)"/><circle cx="5" cy="-38" r="19" fill="#e2b38a" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="-8.7" cy="-36" rx="3.6" ry="4.6" fill="#c68d62" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><path d="M-11.5,-37.0 Q-10.5,-19.9 7.1,-18.6 Q23.6,-19.9 24.6,-37.0 Q15.7,-32.3 7.1,-31.2 Q-1.4,-32.3 -11.5,-37.0 Z" fill="#4a2f1f" stroke="#0b0a10" stroke-width="2.2" stroke-linejoin="round"/><rect x="1.5" y="-30.0" width="11.8" height="5.7" rx="1.6" fill="#fff" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><path d="M2.5,-27.2 h9.8 M5.4,-29.0 v3.7 M9.3,-29.0 v3.7" stroke="#0b0a10" stroke-width="1.3"/><ellipse cx="4.2" cy="-40.3" rx="2.8" ry="2.4" fill="#fff" stroke="#0b0a10" stroke-width="1.5" stroke-linejoin="round"/><circle cx="5.0" cy="-40.0" r="1.3" fill="#0b0a10"/><path d="M7.9,-43.5 L0.2,-47.7 L0.2,-45.2 L7.9,-41.5 Z" fill="#0b0a10"/><ellipse cx="17.2" cy="-40.3" rx="3.4" ry="2.9" fill="#fff" stroke="#0b0a10" stroke-width="1.5" stroke-linejoin="round"/><circle cx="18.0" cy="-40.0" r="1.6" fill="#0b0a10"/><path d="M12.6,-43.5 L22.0,-47.7 L22.0,-45.2 L12.6,-41.5 Z" fill="#0b0a10"/><path d="M-14.9,-47.1 C-14.9,-62.3 25.5,-62.3 25.5,-47.1 L27.5,-44.1 Q5.0,-41.6 -16.9,-44.1 Z" fill="#5a6a3a" stroke="#0b0a10" stroke-width="2.6" stroke-linejoin="round"/><path d="M-14.4,-47.1 Q5.0,-44.1 25.0,-47.1 L27.0,-44.3 Q5.0,-41.8 -16.4,-44.3 Z" fill="#44512b"/><path d="M-5.5,-54.3 Q5.0,-60.0 14.5,-55.1" stroke="#75884c" stroke-width="3" fill="none" stroke-linecap="round"/><g transform="translate(6.0 -12.0)"><g class="arm"><circle id="shoulder" r=".1" fill="none"/><circle id="muzzle" cx="69.0" cy="5" r=".1" fill="none"/><g transform="translate(15 5)"><path d="M-9,-4 h13 v9 h-10 l-3,-2 z" fill="#2a2f35" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><rect x="3" y="-5" width="31" height="9.5" rx="2" fill="#1e2226" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><rect x="33" y="-2" width="19" height="4" rx="1" fill="#1e2226" stroke="#0b0a10" stroke-width="1.6" stroke-linejoin="round"/><rect x="50" y="-2.9" width="5" height="5.8" rx="1" fill="#4a525a" stroke="#0b0a10" stroke-width="1.2" stroke-linejoin="round"/><path d="M18,4 l6.5,0 l3.8,11 l-6.3,1.2 z" fill="#2a2f35" stroke="#0b0a10" stroke-width="1.6" stroke-linejoin="round"/><rect x="11" y="-9" width="12" height="4" rx="1" fill="#4a525a" stroke="#0b0a10" stroke-width="1.4" stroke-linejoin="round"/><path d="M6,-1.8 h26" stroke="#4a525a" stroke-width="1.4"/></g><path d="M0,0 L12,4.5" stroke="#0b0a10" stroke-width="11.5" stroke-linecap="round"/><path d="M0,0 L12,4.5" stroke="#5c6c3b" stroke-width="7.5" stroke-linecap="round"/><circle cx="15" cy="5.5" r="4.6" fill="#3b3b40" stroke="#0b0a10" stroke-width="1.8" stroke-linejoin="round"/><g transform="translate(72.0 5)"><g class="mf"><path d="M0,0 L10,-6 L8,-1.5 L18,0 L8,1.5 L10,6 Z" fill="#ffe066"/><circle r="3.2" fill="#fff6c8"/></g></g></g></g></g></svg><!--pilot:end--></div>
-<svg id="fx" aria-hidden="true"></svg>
+<!-- ============ splash ============ -->
+<div id="splash" class="splash-screen">
+  <img class="jungle left" src="assets/art/jungle-left.svg" alt="">
+  <img class="jungle right" src="assets/art/jungle-right.svg" alt="">
+  <div class="splash-in">
+    <p class="kicker">PLAYER 01</p>
+    <h1 class="chrome">ANUJ KUMAR SHARMA</h1>
+    <p class="fire-lite">ASPIRING SOFTWARE ENGINEER · AIT PUNE '28</p>
+    <ul class="keys" aria-label="Controls">
+      <li><kbd>A</kbd><kbd>D</kbd>MOVE</li>
+      <li><kbd>W</kbd>JETPACK</li>
+      <li><kbd>E</kbd>INTERACT</li>
+      <li><kbd>MOUSE</kbd>AIM · FIRE</li>
+    </ul>
+    <button id="deploy" class="deploy-btn" type="button">PRESS ANY KEY TO DEPLOY</button>
+  </div>
+</div>
+
+<!-- ============ station panels (also the plain page in resume mode) ============ -->
+<div id="panels">
+  <section class="station" id="p-hero" aria-label="Anuj Kumar Sharma">
+    <div class="hero-flat">
+      <p class="kicker">PLAYER 01</p>
+      <p class="chrome">ANUJ KUMAR SHARMA</p>
+      <p class="fire-lite">ASPIRING SOFTWARE ENGINEER · AIT PUNE '28</p>
+    </div>
+  </section>
+
+  <section class="station panel" id="p-briefing" role="dialog" aria-modal="true" aria-labelledby="h-brief" data-for="briefing">
+    <button class="close" type="button" aria-label="Close">ESC</button>
+    <h2 class="fire" id="h-brief">PLAYER FILE</h2>
+    <ul class="lines">
+      <li>Engineering student at AIT Pune, class of 2028.</li>
+      <li>Competitive programmer. GSSoC'25 mentor.</li>
+      <li>Building toward distributed systems and ML infrastructure.</li>
+    </ul>
+    <div class="rank"><span class="pixel" id="rank-name">CORPORAL</span><span class="xp"><i id="xp"></i></span></div>
+    <dl class="stats">
+      <div><dt>COMMITS</dt><dd data-stat="commits">158</dd></div>
+      <div><dt>CONTRIBS / YR</dt><dd data-stat="contrib">180</dd></div>
+      <div><dt>ACTIVE DAYS / YR</dt><dd data-stat="active">49</dd></div>
+      <div><dt>PUBLIC REPOS</dt><dd data-stat="repos">24</dd></div>
+    </dl>
+    <p class="live"><span class="dot"></span>LIVE FROM GITHUB · <span id="synced">SYNCED DAILY</span></p>
+  </section>
+
+  <section class="station panel" id="p-armory" role="dialog" aria-modal="true" aria-labelledby="h-armory" data-for="armory">
+    <button class="close" type="button" aria-label="Close">ESC</button>
+    <h2 class="fire" id="h-armory">ARMORY</h2>
+    <ul class="crates">
+      <li style="--c:#3776AB"><i style="--i:url(assets/icons/python.svg)"></i>Python</li>
+      <li style="--c:#00599C"><i style="--i:url(assets/icons/cplusplus.svg)"></i>C++</li>
+      <li style="--c:#00ADD8"><i style="--i:url(assets/icons/go.svg)"></i>Go</li>
+      <li style="--c:#3178C6"><i style="--i:url(assets/icons/typescript.svg)"></i>TypeScript</li>
+      <li style="--c:#F7DF1E"><i style="--i:url(assets/icons/javascript.svg)"></i>JavaScript</li>
+      <li style="--c:#EE4C2C"><i style="--i:url(assets/icons/pytorch.svg)"></i>PyTorch</li>
+      <li style="--c:#FF4B4B"><i style="--i:url(assets/icons/streamlit.svg)"></i>Streamlit</li>
+      <li style="--c:#0175C2"><i style="--i:url(assets/icons/dart.svg)"></i>Dart</li>
+      <li style="--c:#F03C2E"><i style="--i:url(assets/icons/git.svg)"></i>Git</li>
+      <li style="--c:#2088FF"><i style="--i:url(assets/icons/githubactions.svg)"></i>Actions</li>
+    </ul>
+  </section>
+
+  <section class="station panel wide" id="p-missions" role="dialog" aria-modal="true" aria-labelledby="h-missions" data-for="missions">
+    <button class="close" type="button" aria-label="Close">ESC</button>
+    <h2 class="fire" id="h-missions">MISSIONS</h2>
+    <div class="cards">
+      <a class="card done" href="https://github.com/anujkumarsharma1/kavach">
+        <span class="status"><i class="ic check"></i>COMPLETE</span><h3>KAVACH</h3>
+        <p>Finds payloads hidden inside model weights.</p>
+        <span class="stack"><i style="--i:url(assets/icons/python.svg)"></i><i style="--i:url(assets/icons/pytorch.svg)"></i><i style="--i:url(assets/icons/streamlit.svg)"></i></span><span class="open">REPO ↗</span>
+      </a>
+      <a class="card briefed" href="https://github.com/anujkumarsharma1/zero-to-hero">
+        <span class="status">BRIEFED</span><h3>ZERO-TO-HERO</h3>
+        <p>Autograd engine and char-level LM, from scratch.</p>
+        <span class="stack"><i style="--i:url(assets/icons/python.svg)"></i><i style="--i:url(assets/icons/pytorch.svg)"></i></span><span class="open">REPO ↗</span>
+      </a>
+      <a class="card briefed" href="https://github.com/anujkumarsharma1/league-server">
+        <span class="status">BRIEFED</span><h3>LEAGUE-SERVER</h3>
+        <p>Test-driven Go HTTP service with persistence.</p>
+        <span class="stack"><i style="--i:url(assets/icons/go.svg)"></i></span><span class="open">REPO ↗</span>
+      </a>
+      <a class="card locked" href="https://github.com/anujkumarsharma1/raft-kv">
+        <span class="status"><i class="ic lock"></i>DEC 2026</span><h3>RAFT-KV</h3>
+        <p>Fault-tolerant key/value store on Raft.</p>
+        <span class="stack"><i style="--i:url(assets/icons/go.svg)"></i></span><span class="open">REPO ↗</span>
+      </a>
+      <a class="card locked" href="https://github.com/anujkumarsharma1/agent-eval-harness">
+        <span class="status"><i class="ic lock"></i>PLANNED</span><h3>AGENT-EVAL-HARNESS</h3>
+        <p>An agent plus the evals that keep it honest.</p>
+        <span class="stack"><i style="--i:url(assets/icons/python.svg)"></i></span><span class="open">REPO ↗</span>
+      </a>
+      <a class="card locked" href="https://github.com/anujkumarsharma1/llm-gateway">
+        <span class="status"><i class="ic lock"></i>PLANNED</span><h3>LLM-GATEWAY</h3>
+        <p>Go gateway routing between vLLM and SGLang.</p>
+        <span class="stack"><i style="--i:url(assets/icons/go.svg)"></i></span><span class="open">REPO ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="station panel wide" id="p-battlefield" role="dialog" aria-modal="true" aria-labelledby="h-battle" data-for="battlefield">
+    <button class="close" type="button" aria-label="Close">ESC</button>
+    <h2 class="fire" id="h-battle">RADAR · ACTIVITY</h2>
+    <img class="field" loading="lazy" width="840" height="306" onerror="this.hidden=true"
+         src="https://raw.githubusercontent.com/anujkumarsharma1/anujkumarsharma1/main/assets/generated/battlefield.svg"
+         alt="Contribution graph from the last 12 months, drawn as a Mini Militia match">
+    <p class="live"><span class="dot"></span>EVERY CRATER IS A DAY I SHIPPED · REFRESHED DAILY</p>
+  </section>
+
+  <section class="station panel" id="p-comms" role="dialog" aria-modal="true" aria-labelledby="h-comms" data-for="comms">
+    <button class="close" type="button" aria-label="Close">ESC</button>
+    <h2 class="fire" id="h-comms">JOIN MY SQUAD</h2>
+    <ul class="radio">
+      <li><a href="https://www.linkedin.com/in/anuj-kumar-sharma-0ba045324/" style="--c:#0A66C2"><i class="li"></i>LinkedIn</a></li>
+      <li><a href="mailto:anujkumarsharma049@gmail.com" style="--c:#EA4335"><i style="--i:url(assets/icons/gmail.svg)"></i>Gmail</a></li>
+      <li><a href="https://github.com/anujkumarsharma1" style="--c:#f1eefa"><i style="--i:url(assets/icons/github.svg)"></i>GitHub</a></li>
+      <li><a href="https://codeforces.com/profile/anujquant" style="--c:#1F8ACB"><i style="--i:url(assets/icons/codeforces.svg)"></i>Codeforces</a></li>
+      <li><a href="https://topmate.io/cybersmith" style="--c:#ffc21a"><i style="--i:url(assets/icons/calendar-clock.svg)"></i>Topmate</a></li>
+      <li><a href="https://medium.com/@cybersmith" style="--c:#f1eefa"><i style="--i:url(assets/icons/medium.svg)"></i>Medium</a></li>
+    </ul>
+    <p class="gg">GG · RESPAWN IN <span id="respawn">3</span></p>
+  </section>
+
+  <section class="station panel" id="p-pro" role="dialog" aria-modal="true" aria-labelledby="h-pro" data-for="pro">
+    <button class="close" type="button" aria-label="Close">ESC</button>
+    <h2 class="fire" id="h-pro">PRO PACK FOUND</h2>
+    <ul class="lines">
+      <li>You flew all the way up here. That's the attitude.</li>
+      <li>Dual wield unlocked. Every shot now fires twice.</li>
+    </ul>
+    <p class="gg">SECRET 1/1</p>
+  </section>
+
+  <p class="credit">Fan tribute to Mini Militia – Doodle Army 2. Art drawn in code. Icons: Simple Icons, Lucide.</p>
+</div>
 <div id="toast" role="status"></div>
-<div id="spacer" aria-hidden="true"></div>
 
 <script src="main.js" defer></script>
 </body>
